@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:svg="http://www.w3.org/2000/svg">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Joker</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/Header-Dark.css">
+    <link rel="stylesheet" href="assets/css/animate.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/layer/theme/default/layer.css">
+    <style>
+        #mydiv{
+            height: 10px;
+            background-color: white;
+            margin-left: 25px;
+            margin-right: 25px;
+            margin-bottom: 5px;
+        }
+        #mysvg{
+        	height: 100%;
+        	width: 100%;
+        	dispaly: block;
+        }
+    </style>
+</head>
+
+<body>
+<div>
+    <div class="header-dark" style="padding-bottom: 5px" id="head">
+        <!-- 导航栏开始 -->
+        <nav class="navbar navbar-dark navbar-expand-md navigation-clean-search" id="navbar">
+            <div class="container"><a class="navbar-brand">
+                Company Name
+            </a>
+                <button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navcol-1">
+                    <ul class="nav navbar-nav">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" href="#">
+                                Link
+                            </a>
+                        </li>
+                        <li class="dropdown nav-item">
+                            <a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#">
+                                Dropdown
+                            </a>
+                            <div class="dropdown-menu" role="menu">
+                                <a class="dropdown-item" role="presentation" href="#">
+                                    First Item
+                                </a>
+                                <a class="dropdown-item" role="presentation" href="#">
+                                    Second Item
+                                </a>
+                                <a class="dropdown-item" role="presentation" href="#">
+                                    Third Item
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                    <form class="form-inline mr-auto" target="_self">
+                        <div class="form-group">
+                            <label for="search-field">
+                                <i class="fa fa-search"></i>
+                            </label>
+                            <input class="form-control search-field" type="search" name="search" id="search-field">
+                        </div>
+                    </form>
+                    <span class="navbar-text">
+                        <a href="#" class="login">Log In</a>
+                    </span>
+                    <a class="btn btn-light action-button" role="button" href="#">Sign Up</a>
+                </div>
+            </div>
+        </nav>
+        <!-- 导航栏结束 -->
+
+        <!-- 大标题开始 -->
+        <div class="container hero" id="hero">
+            <div class="row">
+                <div class="col-md-8 offset-md-2 text-left" style="margin-bottom: 160px;">
+                    <h1 class="text-center jello animated">
+                        基于DBSCAN的可视化系统
+                    </h1>
+                    <div class="text-center">
+	                    <span class="text-white" style="margin-right: 10px;">
+			半径
+	                    </span>
+	                    <input id="r" placeholder="默认：2" class="border rounded border-light shadow-lg" type="number" style="filter: blur(0px) brightness(100%) grayscale(36%) sepia(41%);color: rgb(0,0,0);margin-right: 40px;font-family: Bitter, serif;">
+	                    <span class="text-white" style="margin-right: 10px;">
+			个数
+	                    </span>
+	                    <input id="minPoints" placeholder="默认：3" class="border rounded border-light shadow-lg" type="number" style="filter: blur(0px) brightness(100%) grayscale(36%) sepia(41%);color: rgb(0,0,0);margin-right: 40px;font-family: Bitter, serif;">
+	                    <button id="sure" class="btn btn-primary" type="button" onclick="fun_do()" style="height: 30px; padding-right: 10px; padding-bottom: 0px; padding-left: 10px; padding-top: 0px;margin-bottom: 5px;">
+	                        确定
+	                    </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 大标题结束 -->
+
+        <!-- 矩形标题结束 -->
+        <div style="color: white; text-align: center" id="try">
+            <div class="col-md-8 offset-md-2 text-center" style="color: white">
+                <h2 class="text-center">
+                    可视化布局展示
+                </h2>
+            </div>
+        </div>
+        <!-- 矩形标题结束 -->
+
+        <!-- 矩形布局开始 -->
+        <div id="mydiv">
+			<svg id="mysvg"></svg>
+        </div>
+        <!-- 矩形布局结束 -->
+    </div>
+</div>
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/screen.scroll.js"></script>
+<script type="text/javascript" src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="./hua.js"></script>
+<script type="text/javascript" src="assets/layer/layer.js"></script>
+<script>
+
+	let svgh;
+    let svgw;
+    let mysvg = document.getElementById("mysvg");
+
+	// var w = document.documentElement.clientWidth || document.body.offsetWidth;
+    let h = document.documentElement.clientHeight || document.body.offsetHeight ;
+    let h_navbar = document.getElementById("navbar").clientHeight || document.getElementById("navbar").offsetHeight;
+    let h_try = document.getElementById("try").clientHeight || document.getElementById("try").offsetHeight;
+    let circ = document.getElementById("circ");
+    window.onload = function () {
+        let hero = document.getElementById("hero");
+        svgh = h - h_navbar;
+        hero.style.height = h - h_navbar + "px";
+        //circ.style.height = h - h_navbar + "px";
+        //拿到div
+        let mydiv = document.getElementById("mydiv");
+        //mysvg = document.getElementById("mysvg");
+        svgw = h - h_try - 30;
+        mydiv.style.height = h - h_try - 30 + "px";
+        //mysvg.style.height = h - h_try - 50 + "px";
+        //circ.style.height = h - h_try - 30 + "px";
+    };
+
+    // 浏览器窗口变化后需要做的事情
+    window.onresize = function() {
+        let h = document.documentElement.clientHeight || document.body.offsetHeight ;
+        let h_navbar = document.getElementById("navbar").clientHeight || document.getElementById("navbar").offsetHeight;
+        let h_try = document.getElementById("try").clientHeight || document.getElementById("try").offsetHeight;
+        let hero = document.getElementById("hero");
+        hero.style.height = h - h_navbar + "px";
+        //拿到div
+        let mydiv = document.getElementById("mydiv");
+        mydiv.style.height = h - h_try - 30 + "px";
+    };
+    
+    //var circ = document.getElementById('circ');
+    //var cd = document.getElementById('circ');
+    
+    //var cc = document.getElementByNames("ccc");
+    /*cd.onclick = function () {
+        //此处this指向的c
+        var that=this;
+        //为了防止圆被再次点击，消息监听函数;
+        that.onclick=null;
+        console.log(this);
+        var x=this.getAttribute("r");
+        var y=this.getAttribute("fill-opacity");
+       var t= setInterval(function(){
+            //定时器里的this为window
+         x++;
+         y*=0.9;
+        that.setAttribute("r",x);
+        that.setAttribute("fill-opacity",y);
+        /*if(y<0.001){
+             clearInterval(t)
+            s3.removeChild(that)
+        }*/
+   /* },100);
+    }*/
+</script>
+</body>
+</html>

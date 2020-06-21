@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    
+    <title>Joker</title>
+    
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/Header-Dark.css">
+    <link rel="stylesheet" href="assets/css/animate.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/layer/theme/default/layer.css">
+    <link rel="stylesheet" href="assets/layui/css/layui.css">
+    
+    <style>
+		html, body {
+			margin: 0px;
+			padding: 0px;
+			overflow: hidden;
+		}
+        #mydiv{
+            background-color: white;
+            margin-left: 25px;
+            margin-right: 25px;
+        }
+        #mysvg{
+        	height: 100%;
+        	width: 100%;
+        	dispaly: block;
+        }
+      /*  .slides{
+        	position:fixed;
+        	right:0;
+        	top:0%;
+        }
+        .slides .slideul>li{
+        	position:relative;
+        	display:block;
+        	width:115px;
+        	height:45px;
+        	overflow:visible;
+        }
+        .slide{
+        	position:fixed;
+        	left:0;
+        	top:0%;
+        }
+        .slide .slideul>li{
+        	position:absolute;
+        	left:0px;
+        	top:0px
+        	display:block;
+        	width:45px;
+        	height:45px;
+        	overflow:visible;
+        }*/
+        #bigtitle{
+        	width:auto;
+        	display:inline-block !important;
+        	display:inline;
+        }
+    </style>
+</head>
+<body>
+	<div>
+	    <div class="header-dark" id="head">
+	        <div style="color: white; text-align: center" id="try">
+	            <div class="col-md-8 offset-md-2 text-center" style="color: white; -moz-user-select:none;" unselectable="on" onselectstart="return false;">
+	                <h2 id="bigtitle" class="text-center" style=" width:auto;">
+	                    基于密度的空间数据聚类系统的设计与实现
+	                </h2>
+	            </div>
+	            <button id="tip" class="layui-btn layui-btn-radius"><i class="layui-icon">&#xe621;</i>生成文件</button>
+	            <button id="show" class="layui-btn layui-btn-radius"><i class="layui-icon">&#xe62c;</i>显示文件数据</button>
+	            <button id="tips" class="layui-btn layui-btn-radius"><i class="layui-icon">&#xe642;</i>编辑参数</button>
+	            <button id="tipss" class="layui-btn layui-btn-radius"><i class="layui-icon">&#xe605;</i>开始聚类</button>
+	            <!-- <button id="checkbtn" class="layui-btn layui-btn-radius"></button> -->
+	            <!-- <input type="range" name="range" min="1" max="3" step="1"/> -->
+	        </div>
+	        <div id="mydiv">
+				<svg id="mysvg" xmlns:svg="http://www.w3.org/2000/svg"></svg>
+	        </div>
+	    </div>
+	</div>
+	
+	<!-- 侧边栏右 -->
+	<!-- <div class="slides">
+		<ul class="slideul">
+	    	<li><button id="tips" class="layui-btn layui-btn-radius"><i class="layui-icon">&#xe642;</i>编辑参数</button></li>
+	    	<li><img src="image/slide-01.jpg" id="tips" width="45px" height="45px"></li>
+	    </ul>
+	</div> -->
+	<!-- 侧边栏左 -->
+	<!-- <div class="slide">
+		<ul class="slideul">
+			<li><button id="tip" class="layui-btn layui-btn-radius">生成文件</button></li>
+	    	<li><img src="image/slide-01.jpg" id="tip" width="45px" height="45px"></li>
+	    </ul>
+	</div> -->
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/layer/layer.js"></script>
+<script src="assets/layui/layui.all.js"></script>
+
+<!-- 自定义js -->
+<!-- <script type="text/javascript" src="./assets/js/screen.scroll.js"></script> -->
+<script type="text/javascript" src="assets/js/hua.js"></script>
+<script type="text/javascript" src="assets/js/createfile.js"></script>
+<script type="text/javascript" src="assets/js/show.js"></script>
+<script type="text/javascript" src="assets/js/appendfile.js"></script>
+<script type="text/javascript" src="assets/js/method.js"></script>
+<script>
+
+	var counts =  '';
+	var rr = '';
+	var minpoints = '';
+	var showflag = 0;
+	var appendPoints = [];  //length
+	var clicktimes = 0;   //点击生成点个数
+	var editflag = 0;     //点击编辑参数事件
+	var startclick = 0;   //点击聚类
+	var newpoints = [];  //未读取文件直接点击屏幕生成点
+	var allpoints = [];  //点击聚类之后的所有点列表  点击屏幕点也在这里 真坐标点
+	var newcolor; //新生成的点的颜色
+	var okpoints; //所有已聚类的点
+	var okpointsreal;  //所有已聚类的点的真实坐标
+    window.onload = function () {
+    	let h = document.documentElement.clientHeight || document.body.offsetHeight ;
+        let h_try = document.getElementById("try").clientHeight || document.getElementById("try").offsetHeight;
+        //拿到div
+        $("#mydiv").height(h - h_try - 15);
+	//	mydiv = document.getElementById("mydiv");
+   //     mydiv.style.height = h - h_try - 20 + "px";
+   //     svgh = mydiv.style.height;
+   //     svgw = mydiv.style.width;
+      //  $("#mydiv").innerWidth();
+      //  svgw = h - h_try - 30;
+   //     console.log($("#mydiv").innerHeight());
+   //     console.log($("#mydiv").innerWidth());
+    };
+    // 浏览器窗口变化后需要做的事情
+    window.onresize = function() {
+        let h = document.documentElement.clientHeight || document.body.offsetHeight ;
+        let h_try = document.getElementById("try").clientHeight || document.getElementById("try").offsetHeight;
+        //拿到div
+        $("#mydiv").height(h - h_try - 15);
+    //    let mydiv = document.getElementById("mydiv");
+    //    mydiv.style.height = h - h_try - 20 + "px";
+   //     console.log($("#mydiv").innerHeight());
+   //     console.log($("#mydiv").innerWidth());
+    };
+    
+    //显示文件内容
+    $("#show").click(function(){
+    	if(editflag == 0) {
+    		if(startclick == 0) {
+        		show();
+        	}else {              //聚类之后的事件
+        		layer.msg("您已经聚类成功！");
+            }
+    	} else if(editflag == 1) {
+    		layer.msg("您刚刚编辑过参数，不能再显示文件了！");
+    	}
+    });
+    
+    $("#mysvg").click(function(ev){
+    	if(editflag == 0) {
+    		let xx = ev.clientX-25;
+            let yy = ev.clientY-76;
+            let point = {};
+            let newpoint = {};
+            newpoint.x = xx;
+            newpoint.y = yy;
+            point.x = xx/$("#mydiv").innerWidth()*1000;
+            point.y = yy/$("#mydiv").innerHeight()*500;
+        	if(startclick == 0) {  //聚类之前的点击事件
+        		clicktimes++;
+                appendPoints.push(point);
+                var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        		circle.setAttribute('r', 4);
+        		circle.setAttribute('cx', xx);
+        		circle.setAttribute('cy', yy);
+        		circle.setAttribute('fill', 'white'); //用白色填充,用绿色覆盖
+        		circle.setAttribute('stroke', 'black');
+        		circle.setAttribute('stroke-width', 1);
+        		circle.setAttribute('fill-opacity', 1);
+                mysvg.appendChild(circle);
+        	} else {              //聚类之后的事件
+        		// TODO
+        		layer.msg("您已经聚类成功！");
+        	//	allpoints.push(newpoint);
+        	//	expand(newpoint);
+        		//newpoints.push(point);
+        	}
+    	} else if(editflag == 1) {
+    		layer.msg("您刚刚编辑过参数，不能再点击屏幕了！");
+    	}
+	});
+    
+	//鼠标的移入移出提示事件
+	var that;
+    $(function(){
+    	//编辑参数
+    	$(tips).mouseenter(function(){
+    		if(rr != '' && minpoints != '') {
+    	    	that = layer.tips('您刚刚设定的参数</br>epsilon : ' + rr + '</br>minpoints : ' + minpoints, '#tips', {
+    	    		tips: [3, '#009688'],
+    	    		time: 0,
+    	    		area: 'auto',
+    	    		tipsMore: true
+    	    	});
+    		}
+    	}).mouseleave(function(){
+    		layer.close(that);
+    	});
+    	//开始聚类
+    	$(tipss).mouseenter(function(){
+    		if(rr == '' && minpoints == '') {
+    	    	that = layer.tips('请先编辑参数！', '#tipss', {
+    	    		tips: [3, '#009688'],
+    	    		time: 0,
+    	    		area: 'auto',
+    	    		tipsMore: true
+    	    	});
+    		}
+    	}).mouseleave(function(){
+    		layer.close(that);
+    	});
+    });
+    
+    //生成文件
+    $("#tip").click(function(){
+    	layer.open({
+			type: 2,
+			title: 'parameters',
+			area: ['40%', '40%'],
+			fixed: true, //固定
+			//  maxmin: true,
+			shadeClose: true,
+			closeBtn: 0,
+			maxmin: false,
+			content: 'pop_newfile.html'
+		});
+	});
+    
+    //编辑参数
+	$("#tips").click(function(){
+		var cont;
+		if(showflag==0 && clicktimes==0) {
+			layer.msg("请先显示文件数据或者在屏幕上点击生成点哦~");
+			return false;
+		}
+		if(showflag == 0) //未显示文件 说明显示点击
+			cont = 'pop.html?flag=1';
+		else
+			cont = 'pop.html?flag=0';
+		layer.open({
+			type: 2,
+			title: 'parameters',
+			area: ['40%', '65%'],
+			fixed: true, //固定
+			//  maxmin: true,
+			shadeClose: true,
+			closeBtn: 0,
+			maxmin: false,
+			content: cont
+		});
+	});
+	
+</script>
+</body>
+</html>
